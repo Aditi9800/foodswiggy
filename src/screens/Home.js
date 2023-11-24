@@ -9,7 +9,11 @@ export const Home = () => {
     <>
       <Navbar></Navbar>
       <Carousal></Carousal>
+      <div className="m-3">
       <Cards></Cards>
+      <Cards></Cards>
+      <Cards></Cards>
+      </div>
       
       <Footer></Footer>
     </>
