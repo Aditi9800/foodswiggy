@@ -1,25 +1,30 @@
 import React, { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
-import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
+import { Navbar } from "../components/Navbar";
 
-export const Login = () => {
+export default function Signup() {
   const [credentials, setcredentials] = useState({
+    name: "",
     email: "",
-    password: ""
+    password: "",
+    geolocation: "",
   });
   let navigate=useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault(); //syntethic event
-    const response = await fetch("http://localhost:5000/api/loginuser", {
+    const formData = new FormData(e.target);
+    const response = await fetch("http://localhost:5000/api/createuser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       //to convert js object to json string as in a http request json is a common format 
       body: JSON.stringify({
+        name: credentials.name,
         email: credentials.email,
         password: credentials.password,
+        location: credentials.geolocation,
       }),
     });
 
@@ -28,21 +33,29 @@ export const Login = () => {
     const json = await response.json();
     console.log(json);
 
-    if (!json.success){
-      if(json.errors==="User not found")alert("user not found");
-      else alert("Try Logging with corretct password");
-    } 
+    if (!json.success) alert("Enter valid Credentials");
     else navigate("/");
   };
   const onChange = (event) => {
     setcredentials({ ...credentials, [event.target.name]: event.target.value });
   };
   return (
-   <>
-   <Navbar></Navbar>
-    <div className="container">
+    <>
+    <Navbar></Navbar>
+      <div className="container">
         <form onSubmit={handleSubmit}>
-         
+          <div className="mb-3">
+            <label htmlFor="exampleInputEmail1" className="form-label">
+              Name
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="name"
+              value={credentials.name}
+              onChange={onChange}
+            />
+          </div>
           <div className="mb-3">
             <label htmlFor="exampleInputEmail1" className="form-label">
               Email address
@@ -74,16 +87,28 @@ export const Login = () => {
               onChange={onChange}
             />
           </div>
-        
+          <div className="mb-3">
+            <label htmlFor="exampleInputEmail1" className="form-label">
+              Address
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="geolocation"
+              value={credentials.geolocation}
+              onChange={onChange}
+            />
+          </div>
+
           <button type="submit" className="btn btn-success">
             Submit
           </button>
-          <Link to="/createuser" className="m-3 btn btn-danger">
-            I'm a new user.
+          <Link to="/login" className="m-3 btn btn-danger">
+            Already a user
           </Link>
         </form>
       </div>
-<Footer></Footer>
-   </>
-  )
+      <Footer></Footer>
+    </>
+  );
 }
