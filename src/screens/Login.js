@@ -32,7 +32,11 @@ export const Login = () => {
       if(json.errors==="User not found")alert("user not found");
       else alert("Try Logging with corretct password");
     } 
-    else navigate("/");
+    else {
+      localStorage.setItem("authToken",json.authToken)
+      console.log(localStorage.getItem("authToken"));
+      navigate("/");
+    }
   };
   const onChange = (event) => {
     setcredentials({ ...credentials, [event.target.name]: event.target.value });

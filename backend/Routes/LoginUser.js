@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const User=require("../models/User");
 const {body,validationResult}=require('express-validator');
+const bcrypt=require("bcryptjs");
+const jwt=require("jsonwebtoken");
+const jwtSecret="Mynameisudontknow#";
+
 
 router.post("/loginuser",[body('email').isEmail(),body('password','Incorrect Password').isLength({min:1})],async(req,res)=>{
     // res.json({success:true});
@@ -16,10 +20,19 @@ router.post("/loginuser",[body('email').isEmail(),body('password','Incorrect Pas
         if(!userData){
             return res.status(400).json({errors:"User not found"});
         }
-        if(req.body.password!==userData.password){
-            return res.status(400).json({errors:"Try Logging with corretct credentials"});
+        const comparePassword=await bcrypt.compare(req.body.password,userData.password);
+        if(!comparePassword){
+            return res.status(400).json({errors:"Try Logging with correct password"});
         }
-        res.json({success:true});
+
+        const data={
+            user:{
+                id:userData.id
+            }
+        }
+        const authToken=jwt.sign(data,jwtSecret);
+
+       return  res.json({success:true,authToken:authToken});
     }catch(error){
         console.log(error);
         res.json({success:false});

@@ -3,7 +3,8 @@ const router = express.Router();
 const User=require("../models/User");
 const {body,validationResult}=require('express-validator');
 const bcrypt=require("bcryptjs");
-
+const jwt=require("jsonwebtoken");
+const jwtSecret="Mynameisudontknow#";
 
 router.post("/createuser",[body('email').isEmail(),body('password','Incorrect Password').isLength({min:1})],async(req,res)=>{
     // res.json({success:true});
